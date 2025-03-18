@@ -8,8 +8,8 @@ export const validateBody = (schema) => {
       });
       next();
     } catch (e) {
-      const err = createHttpError.BadRequest({
-        message: e.message,
+      const err = createHttpError(404, {
+        message: 'Invalid request body',
       });
       next(err);
     }
