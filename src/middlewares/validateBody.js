@@ -8,8 +8,9 @@ export const validateBody = (schema) => {
       });
       next();
     } catch (e) {
-      const err = createHttpError(404, {
-        message: 'Invalid request body',
+      const errors = e.details.map((detail) => detail.message);
+      const err = createHttpError(400, {
+        message: `Invalid request body:${errors}`,
       });
       next(err);
     }
