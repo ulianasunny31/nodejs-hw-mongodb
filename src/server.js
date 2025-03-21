@@ -19,9 +19,11 @@ export function setupServer() {
   //pino pretty
   app.use(
     pino({
+      autoLogging: false,
       transport: {
         target: 'pino-pretty',
       },
+      level: 'error',
     }),
   );
 
