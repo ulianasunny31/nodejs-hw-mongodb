@@ -54,3 +54,36 @@ export const loginUser = async (payload) => {
 export const logoutUser = async (sessionId) => {
   await SessionCollection.deleteOne({ id: sessionId });
 };
+
+export const refreshUser = async ({ sessionId, refreshToken }) => {
+  //checking if this session exists
+  const session = await SessionCollection.findOne({
+    id: sessionId,
+    refreshToken,
+  });
+  if (!session) throw createHttpError(401, 'Session not found');
+
+  //checking if session is expired
+  if (new Date(session.refreshTokenValidUntil) < new Date()) {
+    throw createHttpError(401, 'Session has expired');
+  }
+
+  const newSession = createSession();
+  await SessionCollection.deleteOne({ id: session.id });
+  return await SessionCollection.create({
+    userId: session.userId,
+    ...newSession,
+  });
+};
+
+function createSession() {
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+  };
+}

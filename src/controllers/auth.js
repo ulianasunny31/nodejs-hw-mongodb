@@ -15,15 +15,7 @@ export const loginUserController = async (req, res, next) => {
   const session = await loginUser(req.body);
 
   //setting cookies
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAYS),
-  });
-
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAYS),
-  });
+  setUpSession(res, session);
 
   res.status(200).json({
     status: 200,
@@ -44,3 +36,19 @@ export const logoutUserController = async (req, res, next) => {
 
   res.status(204).send();
 };
+
+export const refreshUserController = async (req, res, next) => {
+  const session = refreshUser;
+};
+
+function setUpSession(res, session) {
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + THIRTY_DAYS),
+  });
+
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + THIRTY_DAYS),
+  });
+}
