@@ -7,6 +7,7 @@ import {
 import {
   registerUserController,
   loginUserController,
+  logoutUserController,
 } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
@@ -23,5 +24,7 @@ router.post(
   validateBody(LoginValidationSchema),
   ctrlWrapper(loginUserController),
 );
+
+router.post('/logout', ctrlWrapper(logoutUserController));
 
 export default router;

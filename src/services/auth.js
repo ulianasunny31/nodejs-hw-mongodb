@@ -4,7 +4,7 @@ import { UsersCollection } from '../db/model/auth.js';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 
-import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/index.js';
+import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import { SessionCollection } from '../db/model/session.js';
 
 //
@@ -30,7 +30,10 @@ export const loginUser = async (payload) => {
   if (!user) throw createHttpError(404, 'User not found');
 
   //comparing passwords
-  const isEqualPasswords = bcrypt.compare(payload.password, user.password);
+  const isEqualPasswords = await bcrypt.compare(
+    payload.password,
+    user.password,
+  );
   if (!isEqualPasswords) throw createHttpError(401, 'Unauthorized');
 
   //deleting previous session
@@ -40,10 +43,14 @@ export const loginUser = async (payload) => {
   const refreshToken = randomBytes(30).toString('base64');
 
   return await SessionCollection.create({
-    user: user._id,
+    userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now + ONE_DAY),
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
   });
+};
+
+export const logoutUser = async (sessionId) => {
+  await SessionCollection.deleteOne({ id: sessionId });
 };
