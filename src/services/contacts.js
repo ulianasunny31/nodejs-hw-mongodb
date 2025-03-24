@@ -73,10 +73,10 @@ export const updateContact = async (
     },
   );
 
-  if (!contact || !contact.value) return null;
+  if (!contact) return null;
 
   return {
     contact: contact.value,
-    isNew: Boolean(contact?.lastErrorObject?.updated),
+    isNew: false,
   };
 };
