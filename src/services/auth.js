@@ -97,9 +97,10 @@ export const requestReset = async (email) => {
   const user = await UsersCollection.findOne({ email });
 
   if (!user) {
-    throw createHttpError(404, 'Contact not found');
+    throw createHttpError(404, 'User not found');
   }
 
+  //create jwt token
   const resetToken = jwt.sign(
     {
       sub: user._id,
@@ -109,6 +110,7 @@ export const requestReset = async (email) => {
     { expiresIn: '5m' },
   );
 
+  //email template
   const templatePath = path.join(TEMPLATES_DIR, 'resetemail.html');
   const templateSourse = (await fs.readFile(templatePath)).toString();
 
@@ -118,12 +120,34 @@ export const requestReset = async (email) => {
     link: `${getEnvVariables('DOMAIN')}/reset-password?token=${resetToken}`,
   });
 
-  await sendEmail({
+  //send request pwd change email
+  return await sendEmail({
     from: getEnvVariables(SMTP.SMTP_FROM),
     to: email,
     subject: 'Reset your password',
     html,
   });
+};
+
+export const resetPassword = async (payload) => {
+  let entries;
+  const { token, password } = payload;
+
+  try {
+    entries = jwt.verify(token, getEnvVariables('JWT_SECRET'));
+  } catch (err) {
+    if (err instanceof Error) throw createHttpError(401, err.message);
+    throw err;
+  }
+
+  const user = await UsersCollection.findOne({
+    email: entries.email,
+    _id: entries.sub,
+  });
+  if (!user) throw createHttpError(404, 'User not found');
+
+  const hashedPwd = await bcrypt.hash(password, 10);
+  await UsersCollection.updateOne({ _id: user._id }, { password: hashedPwd });
 };
 
 //
