@@ -8,11 +8,14 @@ import { getEnvVariables } from './utils/getEnvVarviables.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
+import { UPDLOAD_DIR } from './constants/index.js';
 
 const PORT = Number(getEnvVariables('PORT', '3000'));
 
 export function setupServer() {
   const app = express();
+
+  app.use('/uploads', express.static(UPDLOAD_DIR));
 
   app.use(cors());
   app.use(express.json());

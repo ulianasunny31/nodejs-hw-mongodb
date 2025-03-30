@@ -17,3 +17,12 @@ export const SMTP = {
 };
 
 export const TEMPLATES_DIR = path.join(process.cwd(), 'src', 'templates');
+
+export const TEMP_UPDLOAD_DIR = path.join(process.cwd(), 'temp');
+export const UPDLOAD_DIR = path.join(process.cwd(), 'uploads');
+
+export const CLOUDINARY = {
+  CLOUDINARY_CLOUD_NAME: 'CLOUDINARY_CLOUD_NAME',
+  CLOUDINARY_API_KEY: 'CLOUDINARY_API_KEY',
+  CLOUDINARY_API_SECRET: 'CLOUDINARY_API_SECRET',
+};

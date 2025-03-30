@@ -9,6 +9,9 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { getEnvVariables } from '../utils/getEnvVarviables.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 //get
 export const getAllContactsController = async (req, res) => {
@@ -51,7 +54,19 @@ export const getContactByIdController = async (req, res) => {
 //create
 export const createContactController = async (req, res) => {
   const contact = { ...req.body, userId: req.user._id };
-  const result = await createContact(contact);
+  let photoUrl;
+  console.log(req.file);
+
+  if (req.file) {
+    const isCloudinaryEnabled = getEnvVariables('CLOUDINARY_ENABLED');
+
+    photoUrl = isCloudinaryEnabled
+      ? await saveFileToCloudinary(req.file)
+      : await saveFileToUploadDir(req.file);
+  }
+
+  const result = await createContact({ ...contact, photo: photoUrl });
+
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -76,12 +91,23 @@ export const deleteContactController = async (req, res, next) => {
 export const updateContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const userId = req.user._id;
+  const photo = req.file;
+  let photoUrl;
 
-  console.log('Updating with payload:', req.body);
+  if (photo) {
+    if (getEnvVariables('CLOUDINARY_ENABLED')) {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  const payload = { ...req.body, photo: photoUrl };
+
   const result = await updateContact({
     contactId,
     userId,
-    payload: req.body,
+    payload: payload,
   });
 
   if (!result) {
