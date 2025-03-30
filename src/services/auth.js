@@ -4,9 +4,21 @@ import { UsersCollection } from '../db/model/auth.js';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 
-import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
+import {
+  FIFTEEN_MINUTES,
+  SMTP,
+  TEMPLATES_DIR,
+  THIRTY_DAYS,
+} from '../constants/index.js';
 import { SessionCollection } from '../db/model/session.js';
 
+import jwt from 'jsonwebtoken';
+import { getEnvVariables } from '../utils/getEnvVarviables.js';
+
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import { sendEmail } from '../utils/sendEmail.js';
 //
 //
 
@@ -80,6 +92,43 @@ export const refreshUser = async ({ sessionId, refreshToken }) => {
     ...newSession,
   });
 };
+
+export const requestReset = async (email) => {
+  const user = await UsersCollection.findOne({ email });
+
+  if (!user) {
+    throw createHttpError(404, 'Contact not found');
+  }
+
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    getEnvVariables('JWT_SECRET'),
+    { expiresIn: '5m' },
+  );
+
+  const templatePath = path.join(TEMPLATES_DIR, 'resetemail.html');
+  const templateSourse = (await fs.readFile(templatePath)).toString();
+
+  const template = handlebars.compile(templateSourse);
+  const html = template({
+    name: user.name,
+    link: `${getEnvVariables('DOMAIN')}/reset-password?token=${resetToken}`,
+  });
+
+  await sendEmail({
+    from: getEnvVariables(SMTP.SMTP_FROM),
+    to: email,
+    subject: 'Reset your password',
+    html,
+  });
+};
+
+//
+//
+//
 
 function createSession() {
   const accessToken = randomBytes(30).toString('base64');
