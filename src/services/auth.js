@@ -136,7 +136,9 @@ export const resetPassword = async (payload) => {
   try {
     entries = jwt.verify(token, getEnvVariables('JWT_SECRET'));
   } catch (err) {
-    if (err instanceof Error) throw createHttpError(401, err.message);
+    if (err.name === 'JSONWebTokenError' || err.name === 'TokenExpiredError') {
+      throw createHttpError(401, 'Jwt token is expired or invalid');
+    }
     throw err;
   }
 
