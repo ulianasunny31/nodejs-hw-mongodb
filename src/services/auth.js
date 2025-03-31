@@ -111,7 +111,7 @@ export const requestReset = async (email) => {
   );
 
   //email template
-  const templatePath = path.join(TEMPLATES_DIR, 'resetemail.html');
+  const templatePath = path.join(TEMPLATES_DIR, 'resetEmail.html');
   const templateSourse = (await fs.readFile(templatePath)).toString();
 
   const template = handlebars.compile(templateSourse);
