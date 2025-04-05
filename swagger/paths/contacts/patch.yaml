@@ -1,8 +1,8 @@
 tags:
   - Contacts
-summary: Create a new contact
-operationId: createContact
-description: 'Create a new contact'
+summary: Patch contact
+operationId: patchContact
+description: 'Edit contact. Everything is optional'
 security:
   - bearerAuth: []
 requestBody:
@@ -10,11 +10,6 @@ requestBody:
     multipart/form-data:
       schema:
         type: object
-        required:
-          - name
-          - phoneNumber
-          - contactType
-          - photo
         properties:
           name:
             description: "Contact's name"
