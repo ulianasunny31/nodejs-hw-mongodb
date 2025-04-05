@@ -9,6 +9,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import { UPDLOAD_DIR } from './constants/index.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(getEnvVariables('PORT', '3000'));
 
@@ -16,6 +17,7 @@ export function setupServer() {
   const app = express();
 
   app.use('/uploads', express.static(UPDLOAD_DIR));
+  app.use('/api-docs', swaggerDocs());
 
   app.use(cors());
   app.use(express.json());
