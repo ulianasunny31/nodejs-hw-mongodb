@@ -8,9 +8,9 @@ info:
   description: This is a documentation for the Contacts App
 tags:
   - name: Contacts
-    description: Operation about users.
+    description: Operations about users.
   - name: Auth
-    description: Operation about authorization.
+    description: Operations about authorization.
 servers:
   - url: ''
   - url: ''
@@ -39,6 +39,12 @@ paths:
   /auth/refresh:
     post:
       $ref: '../swagger/paths/auth/refresh.yaml'
+  /auth/send-reset-email:
+    post:
+      $ref: '../swagger/paths/auth/send-reset-email.yaml'
+  /auth/reset-pwd:
+    post:
+      $ref: '../swagger/paths/auth/reset-pwd.yaml'
 components:
   securitySchemes:
     bearerAuth:
