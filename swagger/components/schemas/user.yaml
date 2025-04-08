@@ -16,3 +16,7 @@ properties:
     description: "User's ID"
     type: string
     example: 63e4decdd286j31165d54af5
+  password:
+    description: "User's password"
+    type: string
+    example: $2b$10$g0lJV5WYHvr06vd9UvCn3OvaJwgRil6ughykHqsOEtdqHduu2BwaG
