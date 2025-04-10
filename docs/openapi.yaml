@@ -13,7 +13,6 @@ tags:
     description: Operations about authorization.
 servers:
   - url: 'https://nodejs-hw-mongodb-5-3z48.onrender.com'
-  - url: ''
 paths:
   /contacts/{id}:
     get:
