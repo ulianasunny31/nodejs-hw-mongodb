@@ -46,21 +46,10 @@ responses:
               example: 'Successfully created a user!'
             data:
               type: object
-              required:
-                - name
-                - email
-                - _id
-              properties:
-                name:
-                  type: string
-                  example: 'Charlie Big'
-                email:
-                  type: string
-                  example: 'charlie.big@example.com'
-                _id:
-                  type: string
-                  example: '63e4decdd286j31165d54af5'
+              $ref: '../../components/schemas/user.yaml'
   '401':
     $ref: '../../components/responses/401.yaml'
   '500':
     $ref: '../../components/responses/500.yaml'
+  '409':
+    $ref: ../../components/responses/409.yaml
