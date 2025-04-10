@@ -470,6 +470,9 @@
           "204": {
             "description": "Contact deleted"
           },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
           "404": {
             "$ref": "#/components/responses/404"
           },
@@ -542,25 +545,7 @@
                     },
                     "data": {
                       "type": "object",
-                      "required": [
-                        "name",
-                        "email",
-                        "_id"
-                      ],
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "example": "Charlie Big"
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "charlie.big@example.com"
-                        },
-                        "_id": {
-                          "type": "string",
-                          "example": "63e4decdd286j31165d54af5"
-                        }
-                      }
+                      "$ref": "#/components/schemas/user"
                     }
                   }
                 }
@@ -569,6 +554,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
           },
           "500": {
             "$ref": "#/components/responses/500"
@@ -939,6 +927,36 @@
             "example": "https://res.cloudinary.com/dwiyluky8/image/upload/v1743351385/mgdgl1qewawzifnkk6bt.jpg"
           }
         }
+      },
+      "user": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "_id"
+        ],
+        "properties": {
+          "name": {
+            "description": "User's name",
+            "type": "string",
+            "example": "Charlie Big"
+          },
+          "email": {
+            "description": "User's email",
+            "type": "string",
+            "example": "charlie.big@example.com"
+          },
+          "_id": {
+            "description": "User's ID",
+            "type": "string",
+            "example": "63e4decdd286j31165d54af5"
+          },
+          "password": {
+            "description": "User's password",
+            "type": "string",
+            "example": "$2b$10$g0lJV5WYHvr06vd9UvCn3OvaJwgRil6ughykHqsOEtdqHduu2BwaG"
+          }
+        }
       }
     },
     "responses": {
@@ -998,6 +1016,43 @@
                 "message": {
                   "type": "string",
                   "example": "Contact not found / User not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "409": {
+        "description": "Conflict Error",
+        "content": {
+          "application\\json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "status",
+                "message",
+                "data"
+              ],
+              "properties": {
+                "status": {
+                  "type": "integer",
+                  "example": 409
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ConflictError"
+                },
+                "data": {
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Email in use"
+                    }
+                  }
                 }
               }
             }
